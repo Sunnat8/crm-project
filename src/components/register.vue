@@ -3,8 +3,8 @@
     <div
       class="container d-flex justify-content-center align-items-center text-start vh-75"
     >
-      <div class="card w-50 shadow">
-        <div class="card-header py-3">
+      <div class="card w-50 shadow p-3">
+        <div class="card-header py-2 bg-white">
           <h2 class="text-center">SIGN UP</h2>
         </div>
         <div class="card-body">
@@ -58,14 +58,13 @@
                 placeholder="Confirm Password"
               />
             </div>
-            <button type="submit" class="btn btn-primary mt-4 w-100">
+            <button type="submit" class="btn btn-primary mt-3 w-100">
               Register User
             </button>
           </form>
         </div>
-         <div class="card-footer">
+         <div class="card-footer bg-white position-absolute">
           <p v-if="errors.length">
-          <b>Please correct the following error(s):</b>
           <ul>
             <li class="text-danger" v-for="error, i in errors" :key="i">{{ error }}</li>
           </ul>
@@ -119,18 +118,20 @@ export default {
         this.errors.push("password not equal");
       }
       if (!this.errors.length) {
-        const dt = {
+        let dt = {
           fullName: this.name,
           phoneNumber: this.number,
           prePassword: this.passwordConfirm,
           password: this.password,
         };
-        try {
-          await this.$store.dispatch("registerUser", dt);
-          await this.$router.push("/");
-        } catch (errors) {
-          await errors;
-        }
+        this.$store
+          .dispatch("register", dt)
+          .then(() => this.$router.push("/"))
+          .catch((err) => {
+            console.log(err);
+            if (this.phoneNumber !== this.number)
+              this.errors.push("User Already have");
+          });
       }
 
       if (!this.errors.length) {

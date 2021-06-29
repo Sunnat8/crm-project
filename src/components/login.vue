@@ -1,10 +1,8 @@
 <template>
   <div class="register">
-    <div
-      class="container d-flex justify-content-center align-items-center text-start"
-    >
-      <div class="card w-50 shadow mt-5">
-        <div class="card-header py-3">
+    <div class="container d-flex justify-content-center align-items-center text-start">
+      <div class="card w-50 shadow mt-5 p-3">
+        <div class="card-header py-2 bg-white">
           <h2 class="text-center">LOG IN</h2>
         </div>
         <div class="card-body">
@@ -17,8 +15,7 @@
                 id="number"
                 v-model="number"
                 name="number"
-                placeholder="Your Phone Number"
-              />
+                placeholder="Your Phone Number"/>
             </div>
               <label for="password" class="form-label">Password</label>
             <div class="col-12 input-group">
@@ -28,27 +25,20 @@
                 id="password"
                 v-model="password"
                 name="password"
-                placeholder="password"
-              />
+                placeholder="password"/>
               <div @click="show = !show" class="btn btn-outline-secondary">
               <span v-html="show ? svg : svgon"></span>
               </div>
             </div>
-            <div class="btn mt-3 d-block">     
+            <div class="btn my-2 d-block">     
           <a class="text-decoration-none" href="#">Forgot Password</a>
             </div>
-            <button type="submit" class="btn btn-primary mt-4 w-100">
-              Login
-            </button>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
           </form>
         </div>
-        <div class="card-footer">
+        <div class="card-footer bg-white position-absolute">
           <p v-if="errors.length">
-          <b>Please correct the following error(s):</b>
-          <ul>
-            <li class="text-danger" v-for="error, i in errors" :key="i">{{ error }}</li>
-          </ul>
-        </p>
+          <ul><li class="text-danger" v-for="error, i in errors" :key="i">{{ error }}</li></ul></p>
         </div>
       </div>
     </div>
@@ -91,18 +81,17 @@ export default {
       }
 
       if (!this.errors.length) {
-        const dt = {
+        let dt = {
           phoneNumber: this.number,
           password: this.password,
         };
-        try {
-          await this.$store.dispatch("login", dt);
-          if (dt.phoneNumber === this.number && dt.password === this.password) {
-            await this.$router.push("/");
-          }
-        } catch (e) {
-          console.log(e);
-        }
+        this.$store
+          .dispatch("login", dt)
+          .then(() => this.$router.push("/"))
+          .catch((err) => {
+            console.log(err);
+            this.errors.push("Phone Number or password invalid");
+          });
       }
       if (!this.errors.length) {
         return true;
@@ -112,5 +101,34 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss">
+.register {
+  position: relative;
+  .card-footer {
+    top: 0;
+    left: 0;
+    animation-name: animate;
+    animation-duration: 1s;
+    padding-bottom: 0;
+    p {
+      margin-bottom: 0;
+    }
+    ul {
+      margin-bottom: 0;
+      li {
+        transition: all 1s ease;
+        animation-name: animate;
+        animation-duration: 0.1s;
+        @keyframes animate {
+          0% {
+            transform: translateX(100px);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+      }
+    }
+  }
+}
 </style>
